@@ -45,11 +45,15 @@ async function seedMovies() {
 
     const insertedMovies = await Promise.all(
         movies.map(
-            (movie) => sql`
+            (movie) => {
+                if(!movie?.duration) {
+                    movie.duration = null
+                };
+                sql(`
                 INSERT INTO movies (id, title, director, year, duration, date)
                 VALUES (${movie.id}, ${movie.title}, ${movie.director}, ${movie.year}, ${movie?.duration}, CURRENT_TIMESTAMP())
                 ON CONFLICT (id) DO NOTHING;
-            `,
+            `)},
         ),
     );
 
@@ -72,11 +76,15 @@ async function seedSeries() {
 
     const insertedSeries = await Promise.all(
         series.map(
-            (serie) => sql`
+            (serie) => {
+                if(!serie?.endYear) {
+                    serie.endYear = null
+                };
+                sql(`
                 INSERT INTO series (id, title, startYear, endYear, numberOfSeasons, date)
                 VALUES (${serie.id}, ${serie.title}, ${serie.startYear}, ${serie.endYear}, CURRENT_TIMESTAMP())
                 ON CONFLICT (id) DO NOTHING;
-                `,
+                `)}
         ),
     );
 
@@ -99,11 +107,15 @@ async function seedBooks() {
 
     const insertedBooks = await Promise.all(
         books.map(
-            (book) => sql`
-                INSERT INTO books (id, title, author, originalPublishing, genre, date)
-                VALUES (${book.id}, ${book.title}, ${book.author}, ${book.originalPublishing}, CURRENT_TIMESTAMP())
-                ON CONFLICT (id) DO NOTHING;
-                `,
+            (book) => {
+                if(!book?.originalPublishing) {
+                    book.originalPublishing = null};
+                sql(`
+                    INSERT INTO books (id, title, author, originalPublishing, genre, date)
+                    VALUES (${book.id}, ${book.title}, ${book.author}, ${book.originalPublishing}, CURRENT_TIMESTAMP())
+                    ON CONFLICT (id) DO NOTHING;
+                    `);
+            },
         ),
     );
 
