@@ -1,6 +1,10 @@
 import { Book } from "../../lib/definitions";
+import { comments } from "@/app/lib/placeholder-data";
 
 export default function BookCard( {book}: { book:Book }) {
+
+    const commentBook: string = comments.filter((comment)=>comment.multimediaId === book.id)[0].text;
+
     return (
         <>
             <h1>{book.title}</h1>
@@ -8,6 +12,7 @@ export default function BookCard( {book}: { book:Book }) {
             <p>Publication originale en {book.originalPublishing}</p>
             <p>Genre: {book.genre}</p>
             <p>Avis:</p>
+            <p>{commentBook}</p>
             <p>Notation:</p>
         </>
     )

@@ -1,18 +1,17 @@
 import bcrypt from "bcrypt";
 import postgres from "postgres";
-import { users, movies, series, books } from "../lib/placeholder-data";
+import { users, movies, series, books, comments } from "../lib/placeholder-data";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: "require"});
 
 async function seedUsers() {
-    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-pssp"`;
     await sql`
         CREATE TABLE IF NOT EXISTS users (
-        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(50) NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL
-        );
+        )
     `;
 
     const insertedUsers = await Promise.all(
@@ -30,28 +29,25 @@ async function seedUsers() {
 };
 
 async function seedMovies() {
-    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
     await sql`
-        CREATE TABLE IS NOT EXISTS movies (
-        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS movies (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(100) NOT NULL,
         director VARCHAR(100) NOT NULL,
-        year YEAR NOT NULL,
-        duration INTEGER NULLABLE,
+        year INTEGER NOT NULL,
+        duration INTEGER,
         date TIMESTAMP
-        );
+        )
     `;
 
     const insertedMovies = await Promise.all(
         movies.map(
             (movie) => {
-                if(!movie?.duration) {
-                    movie.duration = null
-                };
+                if(!movie?.duration) movie.duration = null;
                 sql(`
                 INSERT INTO movies (id, title, director, year, duration, date)
-                VALUES (${movie.id}, ${movie.title}, ${movie.director}, ${movie.year}, ${movie?.duration}, CURRENT_TIMESTAMP())
+                VALUES (${movie.id}, ${movie.title}, ${movie.director}, ${movie.year}, ${movie.duration}, CURRENT_TIMESTAMP)
                 ON CONFLICT (id) DO NOTHING;
             `)},
         ),
@@ -61,17 +57,16 @@ async function seedMovies() {
 };
 
 async function seedSeries() {
-    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
     await sql`
         CREATE TABLE IF NOT EXISTS series (
-        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(100) NOT NULL,
-        startYear YEAR NOT NULL,
-        endYear YEAR NULLABLE,
+        startYear INTEGER NOT NULL,
+        endYear INTEGER,
         genre INTEGER NOT NULL,
         date TIMESTAMP
-        );
+        )
     `;
 
     const insertedSeries = await Promise.all(
@@ -82,7 +77,7 @@ async function seedSeries() {
                 };
                 sql(`
                 INSERT INTO series (id, title, startYear, endYear, numberOfSeasons, date)
-                VALUES (${serie.id}, ${serie.title}, ${serie.startYear}, ${serie.endYear}, CURRENT_TIMESTAMP())
+                VALUES (${serie.id}, ${serie.title}, ${serie.startYear}, ${serie.endYear}, CURRENT_TIMESTAMP)
                 ON CONFLICT (id) DO NOTHING;
                 `)}
         ),
@@ -92,17 +87,16 @@ async function seedSeries() {
 };
 
 async function seedBooks() {
-    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
     await sql`
         CREATE TABLE IF NOT EXISTS books (
-        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(100) NOT NULL,
         author VARCHAR(150) NOT NULL,
-        originalPublishing YEAR NULLABLE,
+        originalPublishing INTEGER,
         genre VARCHAR(15) NOT NULL,
         date TIMESTAMP
-        );
+        )
     `;
 
     const insertedBooks = await Promise.all(
@@ -112,7 +106,7 @@ async function seedBooks() {
                     book.originalPublishing = null};
                 sql(`
                     INSERT INTO books (id, title, author, originalPublishing, genre, date)
-                    VALUES (${book.id}, ${book.title}, ${book.author}, ${book.originalPublishing}, CURRENT_TIMESTAMP())
+                    VALUES (${book.id}, ${book.title}, ${book.author}, ${book.originalPublishing}, CURRENT_TIMESTAMP)
                     ON CONFLICT (id) DO NOTHING;
                     `);
             },
@@ -123,13 +117,43 @@ async function seedBooks() {
 
 };
 
+async function seedComments() {
+
+    await sql`
+        CREATE TABLE IF NOT EXISTS comments (
+        id VARCHAR(15) NOT NULL PRIMARY KEY,
+        comment TEXT NOT NULL,
+        notation INTEGER NOT NULL,
+        user_id VARCHAR(15),
+        multimedia_id VARCHAR(15),
+        date TIMESTAMP
+        )
+    `;
+
+    const insertedComments = await Promise.all(
+        comments.map(
+            (comment) => 
+                sql`
+                INSERT INTO comments (id, comment, notation, user_id, multimedia_id, date)
+                VALUES (${comment.id}, ${comment.text}, 5, ${comment.userId}, ${comment.multimediaId}, CURRENT_TIMESTAMP)
+                ON CONFLICT (id) DO NOTHING;
+                `
+        )
+    );
+
+    return insertedComments
+
+    
+}
+
 export async function GET() {
     try {
         const result = await sql.begin((sql) => [
-            seedUsers(),
+            //seedUsers(),
             seedMovies(),
-            seedSeries(),
-            seedBooks(),
+            //seedSeries(),
+            //seedBooks(),
+            //seedComments(),
         ]);
 
         return Response.json({ message: "Database seeded successfully" });

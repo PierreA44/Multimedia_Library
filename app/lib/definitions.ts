@@ -28,3 +28,10 @@ export type Book = {
     originalPublishing?: number | null;
     genre: "roman" | "nouvelle" | "conte" | "biographie" | "théâtre" | "poésie" | "essai";
 };
+
+export type Comment = {
+    id: string,
+    text: string,
+    userId: string,
+    multimediaId: string,
+}

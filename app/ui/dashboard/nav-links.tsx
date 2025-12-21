@@ -18,7 +18,7 @@ export default function NavLinks () {
             {links.map((link) => {
                 const LinkIcon = link.icon;
                 return (
-                    <Link key={link.name} href={link.href} className="flex h-12 bg-amber-700 grow items-center justify-center gap-2 rounded-md">
+                    <Link key={link.name} href={link.href} className="flex h-12 bg-amber-700 grow items-center justify-center gap-2 rounded-md hover:bg-amber-800">
                         <LinkIcon className="w-6" />
                         <p className="hidden md:block">{link.name}</p>
                     </Link>

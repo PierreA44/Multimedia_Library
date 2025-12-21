@@ -4,7 +4,7 @@ import BookCard from "@/app/ui/cards/book-card";
 
 export default async function Page(props: {params : Promise<{id: string}>}) {
     const params = await props.params;
-    const id = parseInt(params.id, 10);
+    const id = parseInt(params.id.slice(1), 10);
     const book:Book = books[id-1];
 
     return (
