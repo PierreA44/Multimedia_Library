@@ -1,7 +1,10 @@
-import { series } from "@/app/lib/placeholder-data"
+import { fetchSeries } from "@/app/lib/actions/serie-action"
+import { Serie } from "@/app/lib/definitions"
 import Link from "next/link"
 
-export default function SeriesPage() {
+export default async function SeriesPage() {
+
+    const series: Serie[]= await fetchSeries();
 
     return (
         <div>
@@ -9,7 +12,7 @@ export default function SeriesPage() {
             <div className="flex flex-col">
                    {series.map((serie) =>{
                     return(
-                        <Link href={`/dashboard/series/${serie.id}`} className="py-2" key={serie.id}>{serie.title} - {serie.numberOfSeasons} saisons</Link>
+                        <Link href={`/dashboard/series/${serie.id}`} className="py-2" key={serie.id}>{serie.title} - {serie.seasons} saisons</Link>
                     )
                     })}
 

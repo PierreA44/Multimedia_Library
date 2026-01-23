@@ -1,5 +1,4 @@
 export type User = {
-    id: string;
     name: string;
     email: string;
     password: string;
@@ -10,22 +9,22 @@ export type Movie = {
     title: string;
     director: string;
     year: number;
-    duration?: number | null;
+    duration: number | null;
 };
 
 export type Serie = {
     id: string;
     title: string;
-    startYear: number;
-    endYear?: number | null;
-    numberOfSeasons: number;
+    start_year: number;
+    end_year: number | null;
+    seasons: number;
 };
 
 export type Book = {
     id: string;
     title: string;
     author: string;
-    originalPublishing?: number | null;
+    original_publishing: number | null;
     genre: "roman" | "nouvelle" | "conte" | "biographie" | "théâtre" | "poésie" | "essai";
 };
 

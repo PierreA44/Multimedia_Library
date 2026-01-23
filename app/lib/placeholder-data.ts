@@ -2,11 +2,15 @@ import { Book, Comment, Movie, Serie, User } from "./definitions";
 
 const users:User[] = [
     {
-        id:"u51",
         name: "La Blatte",
         email: "lablatte@mail.com",
         password: "123456",
     },
+    {
+        name: "Le Chacal",
+        email: "lechacal@mail.com",
+        password: "123456"
+    }
 ];
 
 const movies:Movie[] = [
@@ -58,36 +62,37 @@ const series:Serie[] = [
     {
         id:"s1",
         title: "Lost: Les Disparus",
-        startYear: 2004,
-        endYear: 2010,
-        numberOfSeasons : 6,
+        start_year: 2004,
+        end_year: 2010,
+        seasons : 6,
     },
     {
         id:"s2",
         title: "Stargate SG-1",
-        startYear: 1997,
-        endYear: 2007,
-        numberOfSeasons:10,
+        start_year: 1997,
+        end_year: 2007,
+        seasons:10,
     },
     {
         id:"s3",
         title: "Charmed",
-        startYear: 1998,
-        endYear: 2006,
-        numberOfSeasons: 8,
+        start_year: 1998,
+        end_year: 2006,
+        seasons: 8,
     },
     {
         id:"s4",
         title: "Buffy contre les vampires",
-        startYear: 1997,
-        endYear: 2003,
-        numberOfSeasons: 7,
+        start_year: 1997,
+        end_year: 2003,
+        seasons: 7,
     },
     {
         id:"s5",
         title:"Le Seigneur des anneaux : Les Anneaux de pouvoir",
-        startYear:2022,
-        numberOfSeasons:2,
+        start_year:2022,
+        end_year: null,
+        seasons:2,
     }
 ];
 
@@ -96,35 +101,35 @@ const books:Book[] = [
         id: "b1",
         title: "L'étranger",
         author: "Albert Camus",
-        originalPublishing: 1942,
+        original_publishing: 1942,
         genre : "roman",
     },
     {
         id: "b2",
         title: "Harry Potter à l'école des sorciers",
         author: "J.K. Rowling",
-        originalPublishing: 1997,
+        original_publishing: 1997,
         genre: "roman",
     },
     {
         id:"b3",
         title: "La Cantatrice chauve",
         author: "Eugène Ionesco",
-        originalPublishing: 1950,
+        original_publishing: 1950,
         genre: "théâtre",
     },
     {
         id:"b4",
         title: "Les Fleurs du Mal",
         author: "Charles Baudelaire",
-        originalPublishing: 1857,
+        original_publishing: 1857,
         genre: "poésie",
     },
     {
         id: "b5",
         title: "Le Capital",
         author: "Karl Marx",
-        originalPublishing: 1867,
+        original_publishing: 1867,
         genre: "essai",
     }
 ];

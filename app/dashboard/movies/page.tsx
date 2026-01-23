@@ -1,7 +1,10 @@
-import { movies } from "@/app/lib/placeholder-data"
+import { fetchMovies } from "@/app/lib/actions/movie-action"
+import { Movie } from "@/app/lib/definitions";
 import Link from "next/link"
 
-export default function MoviesPage() {
+export default async function MoviesPage() {
+
+    const movies: Movie[] = await fetchMovies();
 
     return (
         <div>

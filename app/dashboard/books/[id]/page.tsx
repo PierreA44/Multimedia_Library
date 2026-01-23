@@ -1,11 +1,10 @@
+import { fetchBookById } from "@/app/lib/actions/book-action";
 import { Book } from "@/app/lib/definitions";
-import { books } from "@/app/lib/placeholder-data";
 import BookCard from "@/app/ui/cards/book-card";
 
 export default async function Page(props: {params : Promise<{id: string}>}) {
     const params = await props.params;
-    const id = parseInt(params.id.slice(1), 10);
-    const book:Book = books[id-1];
+    const book:Book = await fetchBookById(params.id)
 
     return (
         <BookCard book={book} />

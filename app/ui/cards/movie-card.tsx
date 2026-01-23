@@ -4,7 +4,11 @@ import { comments } from "@/app/lib/placeholder-data";
 
 export default function MovieCard( {movie}: {movie:Movie}) {
 
-const commentMovie: string = comments.filter((comment)=>comment.multimediaId === movie.id)[0].text;
+let commentMovie: string = "aucun commentaire pour le moment";
+
+if(comments.filter((comment)=>comment.multimediaId === movie.id).length > 0) {
+    commentMovie = comments.filter((comment)=>comment.multimediaId === movie.id)[0].text;
+};
 
     return (
         <div className="bg-movie p-4 text-[#BAD1CD]">

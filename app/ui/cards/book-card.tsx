@@ -3,7 +3,13 @@ import { comments } from "@/app/lib/placeholder-data";
 
 export default function BookCard( {book}: { book:Book }) {
 
-    const commentBook: string = comments.filter((comment)=>comment.multimediaId === book.id)[0].text;
+
+    const commentBook: string = "aucun commentaire pour le moment";
+    console.log(book);
+    
+    // if(comments.filter((comment)=>comment.multimediaId === book.id).length > 0) {
+    //     commentBook = comments.filter((comment)=>comment.multimediaId === book.id)[0].text}
+
 
     return (
         <>
