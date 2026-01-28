@@ -4,6 +4,7 @@ import  {z} from "zod";
 import postgres from "postgres";
 import { revalidatePath } from "next/cache";
 import { Book } from "../definitions";
+import { auth } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
 
@@ -11,7 +12,7 @@ const BookFormSchema = z.object({
     id: z.string(),
     title: z.string(),
     author: z.string(),
-    original_publishing: z.coerce.number().gt(1500, {message: "Please enter a year greater than 1500"}),
+    originalPublishing: z.coerce.number().gt(1500, {message: "Please enter a year greater than 1500"}),
     genre: z.literal(["roman", "nouvelle", "conte", "biographie", "théâtre", "poésie", "essai"]),
 });
 
@@ -31,7 +32,7 @@ export async function createBook (prevState: BookState, formData: FormData): Pro
     const validateFields = CreateBook.safeParse({
         title: formData.get("title"),
         author: formData.get("author"),
-        original_publishing: formData.get("original_publishing"),
+        originalPublishing: formData.get("originalPublishing"),
         genre: formData.get("genre"),
     });
 
@@ -42,11 +43,20 @@ export async function createBook (prevState: BookState, formData: FormData): Pro
         };
     };
 
-    const {title, author, original_publishing, genre} = validateFields.data;
+    const {title, author, originalPublishing, genre} = validateFields.data;
+
+    const session = await auth();
+
     try {
         await sql`
-            INSERT INTO books (title, category, author, original_publishing, genre)
-            VALUES (${title}, 'book', ${author}, ${original_publishing}, ${genre});`;
+            INSERT INTO medias (title, category, author, original_publishing, genre)
+            VALUES (${title}, 'book', ${author}, ${originalPublishing}, ${genre});`;
+
+        const mediaId = await sql`SELECT id FROM medias ORDER BY id DESC LIMIT 1`;
+        const userId = await sql`SELECT id FROM users WHERE email=${session?.user?.email}`
+        console.log(mediaId, userId)
+
+        await sql`INSERT INTO libraries (user_id, media_id) VALUES (${userId[0].id}, ${mediaId[0].id})`
 
             revalidatePath("dashboard/books");
         return {
@@ -62,6 +72,7 @@ export async function createBook (prevState: BookState, formData: FormData): Pro
 };
 
 export async function fetchBook(): Promise<Book[] | null > {
+
     try {
         const books: Book[] = await sql`SELECT id, title, author, original_publishing, genre FROM medias WHERE category='book'`;
 
@@ -73,14 +84,42 @@ export async function fetchBook(): Promise<Book[] | null > {
     };
 };
 
-export async function fetchBookById(id:string): Promise<Book | null > {
+export async function fetchUserBooks(email: string): Promise<Book[] | null> {
+
+    try {
+        const userId = await sql`SELECT id FROM users WHERE email=${email}`;
+
+        const books: Book[] = await sql`SELECT medias.id, medias.title FROM libraries
+                                            INNER JOIN medias on libraries.media_id = medias.id
+                                            WHERE libraries.user_id=${userId[0].id} AND medias.category = 'book';`;
+
+        return books;
+        
+    } catch (error) {
+        console.error(error);
+        return null
+    }
+};
+
+export async function fetchBookById(id:string): Promise<Book> {
+
+       const emptyBook : Book = {
+        id: "0",
+        title: "No book",
+        author: "none",
+        original_publishing : null,
+        genre: "nouvelle"
+    };
+
     try {
         const book: Book[] = await sql`SELECT id, title, author, original_publishing, genre FROM medias WHERE id=${id}`;
+        if(book[0]) {
+            return book[0];
 
-        return book[0];
+        } else return emptyBook;
 
     } catch (error) {
         console.error(error);
-        return null;
+        return emptyBook
     };
 };

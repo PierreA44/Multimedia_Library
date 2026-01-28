@@ -12,6 +12,7 @@ export const authConfig = {
                 if(isLoggedin) return true;
                 return false;
             } else if(isLoggedin) {
+                console.log();
                 return Response.redirect(new URL('/dashboard', nextUrl));
             };
             return true

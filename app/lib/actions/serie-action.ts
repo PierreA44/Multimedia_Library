@@ -10,8 +10,8 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
 const SerieFormSchema = z.object({
     id: z.string(), 
     title: z.string(),
-    start_year: z.coerce.number(), 
-    end_year: z.coerce.number().nullable(), 
+    startYear: z.coerce.number(), 
+    endYear: z.coerce.number().nullable(), 
     seasons: z.coerce.number(),
 });
 
@@ -42,11 +42,11 @@ export async function createSerie (formData: FormData): Promise<void | SerieStat
         };
     };
 
-    const {title, start_year, end_year, seasons} = validateFields.data;
+    const {title, startYear, endYear, seasons} = validateFields.data;
     try {
         await sql`
-            INSERT INTO series (title, start_year, end_year, seasons)
-            VALUES (${title}, ${start_year}, ${end_year}, ${seasons});`;
+            INSERT INTO medias (title, category, start_year, end_year, seasons)
+            VALUES (${title}, serie, ${startYear}, ${endYear}, ${seasons});`;
             
             revalidatePath("dashboard/series");
         return {
@@ -74,15 +74,42 @@ export async function fetchSeries(): Promise<Serie[] | null> {
     };
 };
 
+export async function fetchUserSeries(email: string): Promise<Serie[] | null> {
+
+    try {
+        const userId = await sql`SELECT id FROM users WHERE email=${email}`;
+
+        const series: Serie[] = await sql`SELECT medias.id, medias.title FROM libraries
+                                            INNER JOIN medias on libraries.media_id = medias.id
+                                            WHERE libraries.user_id=${userId[0].id} AND medias.category = 'serie';`;
+
+        return series;
+        
+    } catch (error) {
+        console.error(error);
+        return null
+    }
+}
+
 export async function fetchSerieById(id:string): Promise<Serie | null> {
+
+    const emptySerie: Serie = {
+        id: '0',
+        title: 'no serie',
+        start_year: 1,
+        end_year: null,
+        seasons: 0
+    }
 
     try {
         const serie: Serie[] = await sql`SELECT id, title, start_year, end_year, seasons FROM medias WHERE id=${id};`;
 
-        return serie[0];
+        if(serie[0]) {
+            return serie[0];
+        } else return emptySerie;
         
     } catch (error) {
         console.error(error);
-        return null;
+        return emptySerie;
     };
 };

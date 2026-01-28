@@ -45,7 +45,7 @@ export async function createMovie (formData: FormData): Promise<void | MovieStat
     const {title, director, year, duration} = validateFields.data;
     try {
         await sql`
-            INSERT INTO movies (title, category, director, year, duration)
+            INSERT INTO medias (title, category, director, year, duration)
             VALUES (${title}, 'movie', ${director}, ${year}, ${duration});`;
 
             revalidatePath("dashboard/movies");
@@ -70,15 +70,42 @@ export async function fetchMovies(): Promise<Movie[] | null> {
     };
 };
 
-export async function fetchMovieById(id:string): Promise<Movie | null> {
+export async function fetchUserMovies(email: string): Promise<Movie[] | null> {
+
+    try {
+        const userId = await sql`SELECT id FROM users WHERE email=${email}`;
+
+        const movies: Movie[] = await sql`SELECT medias.id, medias.title FROM libraries
+                                            INNER JOIN medias on libraries.media_id = medias.id
+                                            WHERE libraries.user_id=${userId[0].id} AND medias.category = 'movie';`;
+
+        return movies;
+        
+    } catch (error) {
+        console.error(error);
+        return null
+    }
+}
+
+export async function fetchMovieById(id:string): Promise<Movie> {
+
+    const emptyMovie : Movie = {
+        id: '0',
+        title: 'no movie',
+        director :"",
+        year: 0,
+        duration: null
+    }
 
     try {
         const movie: Movie[] = await sql`SELECT id, title, director, year, duration FROM medias WHERE id=${id};`;
 
-        return movie[0];
+        if(movie[0]) {
+            return movie[0]
+        } else return emptyMovie;
 
     } catch (error) {
         console.error(error);
-        return null;
+        return emptyMovie;
     };
 };

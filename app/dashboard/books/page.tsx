@@ -1,11 +1,15 @@
-import { fetchBook } from "@/app/lib/actions/book-action"
+import { fetchUserBooks } from "@/app/lib/actions/book-action"
 import BookForm from "@/app/ui/form/book-form"
 import Link from "next/link"
 import { Book } from "@/app/lib/definitions";
+import { auth } from "@/auth";
 
 export default async function BooksPage() {
 
-    const books: Book[] | null = await fetchBook();
+    const session = await auth();
+    const email = session?.user?.email;
+
+    const books: Book[] | null = await fetchUserBooks(email);
 
     return (
         <div className="bg-amber-300 h-full p-4">

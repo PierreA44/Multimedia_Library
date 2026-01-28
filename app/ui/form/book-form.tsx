@@ -15,7 +15,7 @@ export default function BookForm() {
             <label htmlFor="title">Titre du livre</label>
             <input type="text" name="title" id="title" className="bg-white" />
                 {state.errors?.title &&
-              state.errors.title.map((error:string)=>(
+            state.errors.title.map((error:string)=>(
                 <p className="mt-2 text-sm text-red-500" key={error}>{error}</p>))}
 
             <label htmlFor="author">Auteur du livre</label>
