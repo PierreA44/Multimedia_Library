@@ -2,9 +2,10 @@
 
 import  {z} from "zod";
 import postgres from "postgres";
-import { revalidatePath } from "next/cache";
+import { refresh, revalidatePath } from "next/cache";
 import { Book } from "../definitions";
 import { auth } from "@/auth";
+import { Session } from "next-auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
 
@@ -30,7 +31,7 @@ const CreateBook = BookFormSchema.omit({id:true});
 
 export async function createBook (prevState: BookState, formData: FormData): Promise<BookState> {
     const validateFields = CreateBook.safeParse({
-        title: formData.get("title"),
+        title: formData.get("title") ,
         author: formData.get("author"),
         originalPublishing: formData.get("originalPublishing"),
         genre: formData.get("genre"),
@@ -44,24 +45,37 @@ export async function createBook (prevState: BookState, formData: FormData): Pro
     };
 
     const {title, author, originalPublishing, genre} = validateFields.data;
+    const normalizedTitle: string = title.toLocaleLowerCase();
 
-    const session = await auth();
+    const session: Session | null = await auth();
 
     try {
-        await sql`
-            INSERT INTO medias (title, category, author, original_publishing, genre)
-            VALUES (${title}, 'book', ${author}, ${originalPublishing}, ${genre});`;
+        const [result] = await sql`SELECT id FROM medias WHERE title=${normalizedTitle} AND category='book';`;
 
-        const mediaId = await sql`SELECT id FROM medias ORDER BY id DESC LIMIT 1`;
-        const userId = await sql`SELECT id FROM users WHERE email=${session?.user?.email}`
-        console.log(mediaId, userId)
+        if(result) {
+            return {message : "Book already created"};
+        };
 
-        await sql`INSERT INTO libraries (user_id, media_id) VALUES (${userId[0].id}, ${mediaId[0].id})`
+        if(session?.user?.email) {
+            const newBook = await sql`
+                INSERT INTO medias (title, category, author, original_publishing, genre)
+                VALUES (${normalizedTitle}, 'book', ${author}, ${originalPublishing}, ${genre})
+                RETURNING id;`;            
+            
+            const userId = await sql`SELECT id FROM users WHERE email=${session.user.email}`;
 
-            revalidatePath("dashboard/books");
-        return {
-            message: "Book created succesfully."
-        }        
+            if(userId.length === 0) {
+                return {message: "User not found"};
+            };
+            
+            await sql`INSERT INTO libraries (user_id, media_id) VALUES (${userId[0].id}, ${newBook[0].id})`
+            
+            revalidatePath("dashboard/add-media");
+            refresh();
+            
+            return {message: "Book created succesfully."};
+
+        } else return { message: "User not found"};
 
     } catch(error) {
         console.error(error);

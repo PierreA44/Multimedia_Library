@@ -1,9 +1,11 @@
 "use server";
 
 import  {z} from "zod";
-import postgres from "postgres";
-import { revalidatePath } from "next/cache";
+import postgres, { Row, RowList } from "postgres";
+import { refresh, revalidatePath } from "next/cache";
 import { Movie } from "../definitions";
+import { Session } from "next-auth";
+import { auth } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
 
@@ -27,7 +29,7 @@ export type MovieState = {
 
 const CreateMovie = MovieFormSchema.omit({id: true});
 
-export async function createMovie (formData: FormData): Promise<void | MovieState> {
+export async function createMovie (prevState: MovieState, formData: FormData): Promise<MovieState> {
     const validateFields = CreateMovie.safeParse({
         title: formData.get("title"),
         director : formData.get("director"),
@@ -43,13 +45,37 @@ export async function createMovie (formData: FormData): Promise<void | MovieStat
     };
 
     const {title, director, year, duration} = validateFields.data;
-    try {
-        await sql`
-            INSERT INTO medias (title, category, director, year, duration)
-            VALUES (${title}, 'movie', ${director}, ${year}, ${duration});`;
+    const normalizedTitle: string = title.toLocaleLowerCase();
 
-            revalidatePath("dashboard/movies");
-        return {message : `Movie "${title}" created succesfully`}
+    const session: Session | null = await auth();
+
+    try {
+        const [result] = await sql`SELECT id FROM medias WHERE title=${normalizedTitle} AND category='movie';`;
+
+        if(result) {
+            return {message: "Movie already created"};
+        };
+
+        if(session?.user?.email) {
+            const newMovie: RowList<Row[]> = await sql`
+            INSERT INTO medias (title, category, director, year, duration)
+            VALUES (${normalizedTitle}, 'movie', ${director}, ${year}, ${duration})
+            RETURNING id;`;
+
+            const userId: RowList<Row[]> = await sql`SELECT id FROM users WHERE email=${session.user.email};`;
+
+            if(userId.length === 0) {
+                return {message: "User not found"};
+            };
+
+            await sql`INSERT INTO libraries (user_id, media_id) VALUES (${userId[0].id}, ${newMovie[0].id});`;
+
+            revalidatePath("dashboard/add-media");
+            refresh();
+
+            return {message : `Movie created succesfully`}
+
+            } else return {message: "User not found"};
 
     } catch (error) {
         console.error(error);

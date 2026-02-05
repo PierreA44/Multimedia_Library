@@ -15,7 +15,7 @@ export default function BookCard( {book}: { book:Book }) {
         <>
             <h1>{book.title}</h1>
             <p>Auteur: {book.author}</p>
-            <p>Publication originale en {book.originalPublishing}</p>
+            <p>Publication originale en {book.original_publishing}</p>
             <p>Genre: {book.genre}</p>
             <p>Avis:</p>
             <p>{commentBook}</p>

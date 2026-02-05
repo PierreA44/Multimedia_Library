@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenIcon, FilmIcon, HomeIcon, TvIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon, FilmIcon, HomeIcon, PlusCircleIcon, TvIcon } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
 
@@ -8,7 +8,8 @@ const links = [
     {name: "Home", href: "/dashboard", icon: HomeIcon},
     {name: "Movies", href: "/dashboard/movies", icon: FilmIcon},
     {name: "Series", href: "/dashboard/series", icon: TvIcon},
-    {name: "Books", href: "/dashboard/books", icon: BookOpenIcon}
+    {name: "Books", href: "/dashboard/books", icon: BookOpenIcon},
+    {name: "Add a media", href: "/dashboard/add-media", icon: PlusCircleIcon}
 ];
 
 export default function NavLinks () {

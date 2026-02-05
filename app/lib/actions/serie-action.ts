@@ -1,9 +1,11 @@
 "use server";
 
 import  {z} from "zod";
-import postgres from "postgres";
-import { revalidatePath } from "next/cache";
+import postgres, { Row, RowList } from "postgres";
+import { refresh, revalidatePath } from "next/cache";
 import { Serie } from "../definitions";
+import { Session } from "next-auth";
+import { auth } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
 
@@ -27,7 +29,7 @@ export type SerieState = {
 
 const CreateSerie = SerieFormSchema.omit({id:true});
 
-export async function createSerie (formData: FormData): Promise<void | SerieState> {
+export async function createSerie (prevState: SerieState, formData: FormData): Promise<SerieState> {
     const validateFields = CreateSerie.safeParse({
         title: formData.get("title"),
         start_year: formData.get("start_year"),
@@ -43,15 +45,37 @@ export async function createSerie (formData: FormData): Promise<void | SerieStat
     };
 
     const {title, startYear, endYear, seasons} = validateFields.data;
+    const normalizedTitle: string = title.toLocaleLowerCase();
+
+
+    const session: Session | null = await auth()
+
     try {
-        await sql`
+        const [result] = await sql`SELECT id FROM medias WHERE title=${normalizedTitle} AND category='serie';`;
+        
+        if(result) {
+            return {message: "Serie already created"};
+        };
+
+        if(session?.user?.email) {
+            const newSerie: RowList<Row[]> = await sql`
             INSERT INTO medias (title, category, start_year, end_year, seasons)
-            VALUES (${title}, serie, ${startYear}, ${endYear}, ${seasons});`;
-            
-            revalidatePath("dashboard/series");
-        return {
-            message: `Serie "${title}" created succesfully.`
-        }
+            VALUES (${normalizedTitle}, serie, ${startYear}, ${endYear}, ${seasons})
+            RETURNING id;`;
+
+            const userId: RowList<Row[]> = await sql`SELECT id FROM users WHERE email=${session.user.email}`;
+
+            if(userId.length === 0) {
+                return {message: "User not found"};
+            };
+
+            await sql`INSERT INTO libraries (user_id, media_id) VALUES (${userId[0].id}, ${newSerie[0].id})`;
+
+            revalidatePath("dashboard/add-media");
+            refresh();
+
+            return {message: "Serie created succesfully."};
+        } else return {message: "User not found"};
 
     } catch(error) {
         console.error(error);

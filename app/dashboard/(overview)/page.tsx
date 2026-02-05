@@ -5,10 +5,14 @@ import { fetchMovies, fetchUserMovies } from "@/app/lib/actions/movie-action";
 import { Book, Movie, Serie } from "@/app/lib/definitions";
 import { fetchSeries, fetchUserSeries } from "@/app/lib/actions/serie-action";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
 
     const session = await auth();
+    if(!session?.user) {
+        redirect('/');
+    }
 
     let movies : Movie[] | null = await fetchMovies();
     let books : Book[] | null = await fetchBook();
@@ -16,9 +20,11 @@ export default async function DashboardPage() {
 
     if(session?.user) {
         const email = session.user.email
+        if(email) {
         movies = await fetchUserMovies(email);
         books = await fetchUserBooks(email);
         series = await fetchUserSeries(email);
+        }       
     };
 
 

@@ -4,6 +4,19 @@ export type User = {
     password: string;
 };
 
+export type Media = {
+    id: number;
+    title: string;
+    category: "movie" | "serie" | "book";
+    director: string;
+    year: number;
+    duration: number | null;
+    start_year: number;
+    author: string;
+    original_publishing: number | null;
+    email: string;
+}
+
 export type Movie = {
     id: string;
     title: string;
