@@ -11,8 +11,9 @@ export default function AddMediaButton ({mediaId, email, setUpdateMedia}: {media
     }
 
     return(
-        <button type="button" onClick={()=> addMedia(mediaId, email)} className="cursor-pointer">
-            <PlusCircleIcon className="w-6"/>
+        <button type="button" onClick={()=> addMedia(mediaId, email)} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors hover:shadow-md">
+            <PlusCircleIcon className="w-5 h-5"/>
+            <span className="text-sm">Add</span>
         </button>
     )
 }

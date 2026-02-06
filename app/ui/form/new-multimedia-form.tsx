@@ -11,25 +11,29 @@ export default function NewMultimediaForm () {
     const [category, setCategory] = useState("");
 
     return (
-        <div className="text-white my-5 px-6">
+        <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
             <div>
-                <p>Aucun média ne correspond à votre recherche, vous pouvez l&apos;ajouter ici :</p>
+                <p className="text-slate-700 text-lg mb-6 font-semibold">No media found. You can add a new one:</p>
             </div>
-            <>
-                <label htmlFor="category">Sélectionnez la catégorie du média à ajouter</label>
-                <select name="category" id="category" className="text-black bg-white w-15 m-2" onChange={(e)=>{setCategory(e.target.value)}}>
-                    <option value="">-</option>
-                    {categoryOption.map((opt)=>
-                        <option value={opt} key={opt}>{opt}</option>
-                    )}
-                </select>
-                {category === "movie" && 
-                    <MovieForm />}
-                {category === "serie" && 
-                    <SerieForm />}
-                {category === "book" && 
-                    <BookForm />}                
-            </>
+            <div className="space-y-4">
+                <div>
+                    <label htmlFor="category" className="block text-sm font-semibold text-slate-700 mb-2">Select media type</label>
+                    <select name="category" id="category" className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 focus:border-blue-500 focus:outline-none" onChange={(e)=>{setCategory(e.target.value)}}>
+                        <option value="">Choose a type...</option>
+                        {categoryOption.map((opt)=>
+                            <option value={opt} key={opt} className="capitalize">{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
+                        )}
+                    </select>
+                </div>
+                <div className="mt-6">
+                    {category === "movie" && 
+                        <MovieForm />}
+                    {category === "serie" && 
+                        <SerieForm />}
+                    {category === "book" && 
+                        <BookForm />}                
+                </div>
+            </div>
         </div>
     )
 }

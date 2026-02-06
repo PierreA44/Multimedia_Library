@@ -22,10 +22,12 @@ export default async function AddMediaPage() {
 
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 dark:from-black dark:via-purple-950 dark:to-black p-8">
-            <h1 className="text-4xl font-bold text-white mb-8">Rechercher un média parmi la base de donnée</h1>
-            <div className="mt-8 overflow-x-auto">
-                <TableMedia medias={medias} email={email}/>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+            <div className="max-w-6xl mx-auto">
+                <h1 className="text-4xl font-bold text-slate-900 mb-8">Search & Add Media</h1>
+                <div className="mt-8">
+                    <TableMedia medias={medias} email={email}/>
+                </div>
             </div>
         </div>
     )
