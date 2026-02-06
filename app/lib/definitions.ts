@@ -23,6 +23,8 @@ export type Movie = {
     director: string;
     year: number;
     duration: number | null;
+    category: "movies";
+    librarie_id: number;
 };
 
 export type Serie = {
@@ -31,6 +33,8 @@ export type Serie = {
     start_year: number;
     end_year: number | null;
     seasons: number;
+    category: "series"
+    librarie_id: number;
 };
 
 export type Book = {
@@ -39,11 +43,13 @@ export type Book = {
     author: string;
     original_publishing: number | null;
     genre: "roman" | "nouvelle" | "conte" | "biographie" | "théâtre" | "poésie" | "essai";
+    category: "books";
+    librarie_id: number;
 };
 
 export type Comment = {
-    id: string,
-    text: string,
-    userId: string,
-    multimediaId: string,
+    id: string;
+    text: string;
+    userId: string;
+    multimediaId: string;
 }

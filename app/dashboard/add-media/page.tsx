@@ -22,7 +22,7 @@ export default async function AddMediaPage() {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-8">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-4xl font-bold text-slate-900 mb-8">Search & Add Media</h1>
                 <div className="mt-8">

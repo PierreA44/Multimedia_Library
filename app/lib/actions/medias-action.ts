@@ -45,3 +45,15 @@ export async function addUserMedia(mediaId:number, email:string): Promise<void> 
         console.error(error);
     }
 }
+
+export async function removeUserMedia(librarieId: number, category: string) {
+
+    try {
+        await sql`DELETE FROM libraries WHERE id = ${librarieId};`;
+
+        revalidatePath(`/dashboard/${category}`);
+
+    } catch (error) {
+        console.error(error)
+    }
+}

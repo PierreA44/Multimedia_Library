@@ -101,10 +101,9 @@ export async function fetchUserMovies(email: string): Promise<Movie[] | null> {
     try {
         const userId = await sql`SELECT id FROM users WHERE email=${email}`;
 
-        const movies: Movie[] = await sql`SELECT medias.id, medias.title FROM libraries
-                                            INNER JOIN medias on libraries.media_id = medias.id
-                                            WHERE libraries.user_id=${userId[0].id} AND medias.category = 'movie';`;
-
+        const movies: Movie[] = await sql`SELECT m.id, m.title, m.category, l.id AS librarie_id FROM libraries l
+                                            INNER JOIN medias m on l.media_id = m.id
+                                            WHERE l.user_id=${userId[0].id} AND m.category = 'movie';`;
         return movies;
         
     } catch (error) {
@@ -120,7 +119,9 @@ export async function fetchMovieById(id:string): Promise<Movie> {
         title: 'no movie',
         director :"",
         year: 0,
-        duration: null
+        duration: null,
+        category: 'movies',
+        librarie_id:0
     }
 
     try {

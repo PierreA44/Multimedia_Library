@@ -103,9 +103,9 @@ export async function fetchUserBooks(email: string): Promise<Book[] | null> {
     try {
         const userId = await sql`SELECT id FROM users WHERE email=${email}`;
 
-        const books: Book[] = await sql`SELECT medias.id, medias.title FROM libraries
-                                            INNER JOIN medias on libraries.media_id = medias.id
-                                            WHERE libraries.user_id=${userId[0].id} AND medias.category = 'book';`;
+        const books: Book[] = await sql`SELECT m.id, m.title, m.category, l.id AS librarie_id FROM libraries l
+                                            INNER JOIN medias m on l.media_id = m.id
+                                            WHERE l.user_id=${userId[0].id} AND m.category = 'book';`;
 
         return books;
         
@@ -122,7 +122,9 @@ export async function fetchBookById(id:string): Promise<Book> {
         title: "No book",
         author: "none",
         original_publishing : null,
-        genre: "nouvelle"
+        genre: "nouvelle",
+        category: 'books',
+        librarie_id: 0,
     };
 
     try {
