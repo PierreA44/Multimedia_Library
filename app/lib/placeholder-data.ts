@@ -20,6 +20,8 @@ const movies:Movie[] = [
         director: "Barry Sonnenfeld",
         year: 1997,
         duration: 98,
+        category: "movies",
+        librarie_id: 0,
     },
     {
         id:"m2",
@@ -27,6 +29,8 @@ const movies:Movie[] = [
         director: "David Cronenberg",
         year: 1986,
         duration: 96,
+        category: "movies",
+        librarie_id: 0,
     },
     {
         id:"m3",
@@ -34,6 +38,8 @@ const movies:Movie[] = [
         director: "Christopher Nolan",
         year: 2010,
         duration: 148,
+        category: "movies",
+        librarie_id: 0,
     },
     {
         id:"m4",
@@ -41,6 +47,8 @@ const movies:Movie[] = [
         director: "Emile Ardolino",
         year: 1987,
         duration: 100,
+        category: "movies",
+        librarie_id: 0,
     },
     {
         id:"m5",
@@ -48,6 +56,8 @@ const movies:Movie[] = [
         director: "Steven Spielberg",
         year:1981,
         duration: 115,
+        category: "movies",
+        librarie_id: 0,
     },
     {
         id:"m6",
@@ -55,6 +65,8 @@ const movies:Movie[] = [
         director: "Barry Sonnenfeld",
         year: 1991,
         duration: 99,
+        category: "movies",
+        librarie_id: 0,
     }
 ];
 
@@ -65,6 +77,8 @@ const series:Serie[] = [
         start_year: 2004,
         end_year: 2010,
         seasons : 6,
+        category: "series",
+        librarie_id: 0,
     },
     {
         id:"s2",
@@ -72,6 +86,8 @@ const series:Serie[] = [
         start_year: 1997,
         end_year: 2007,
         seasons:10,
+        category: "series",
+        librarie_id: 0,
     },
     {
         id:"s3",
@@ -79,6 +95,8 @@ const series:Serie[] = [
         start_year: 1998,
         end_year: 2006,
         seasons: 8,
+        category: "series",
+        librarie_id: 0,
     },
     {
         id:"s4",
@@ -86,6 +104,8 @@ const series:Serie[] = [
         start_year: 1997,
         end_year: 2003,
         seasons: 7,
+        category: "series",
+        librarie_id: 0,
     },
     {
         id:"s5",
@@ -93,6 +113,8 @@ const series:Serie[] = [
         start_year:2022,
         end_year: null,
         seasons:2,
+        category: "series",
+        librarie_id: 0,
     }
 ];
 
@@ -103,6 +125,8 @@ const books:Book[] = [
         author: "Albert Camus",
         original_publishing: 1942,
         genre : "roman",
+        category: "books",
+        librarie_id: 0,
     },
     {
         id: "b2",
@@ -110,6 +134,8 @@ const books:Book[] = [
         author: "J.K. Rowling",
         original_publishing: 1997,
         genre: "roman",
+        category: "books",
+        librarie_id: 0,
     },
     {
         id:"b3",
@@ -117,6 +143,8 @@ const books:Book[] = [
         author: "Eugène Ionesco",
         original_publishing: 1950,
         genre: "théâtre",
+        category: "books",
+        librarie_id: 0,
     },
     {
         id:"b4",
@@ -124,6 +152,8 @@ const books:Book[] = [
         author: "Charles Baudelaire",
         original_publishing: 1857,
         genre: "poésie",
+        category: "books",
+        librarie_id: 0,
     },
     {
         id: "b5",
@@ -131,6 +161,8 @@ const books:Book[] = [
         author: "Karl Marx",
         original_publishing: 1867,
         genre: "essai",
+        category: "books",
+        librarie_id: 0,
     }
 ];
 
