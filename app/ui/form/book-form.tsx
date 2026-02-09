@@ -77,7 +77,7 @@ export default function BookForm() {
                     state.errors.genre.map((error:string)=>(
                         <p className="mt-2 text-sm text-red-600" key={error}>{error}</p>))}
 
-      <p className="text-xs">* champs obligatoires</p>
+            <p className="text-xs">* champs obligatoires</p>
 
 
             <button 

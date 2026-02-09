@@ -17,3 +17,32 @@
     --foreground: #ededed;
   }
 }
+
+/* Auth link styles (Tailwind @apply) */
+@layer components {
+  /* single reusable selector for auth links */
+  .auth-link {
+    @apply text-purple-200 bg-transparent font-semibold text-lg tracking-wide inline-block rounded-lg px-6 py-2 border border-transparent transition-transform transition-colors duration-200 transform shadow-sm;
+  }
+
+  .auth-link:hover {
+    @apply text-white bg-linear-to-r from-purple-600 via-purple-500 to-indigo-600 -translate-y-1 shadow-2xl border-purple-500/40;
+  }
+
+  .auth-link:focus {
+    @apply outline-none ring-4 ring-purple-400/30 rounded-md;
+  }
+
+  .auth-link:active {
+    @apply translate-y-0 scale-98;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .auth-link {
+      @apply text-purple-100;
+    }
+    .auth-link:hover {
+      @apply text-white;
+    }
+  }
+}
