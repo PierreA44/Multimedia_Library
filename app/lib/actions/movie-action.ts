@@ -17,7 +17,11 @@ const MovieFormSchema = z.object({
     title: z.string().min(3),
     director: z.string().min(5),
     year: z.coerce.number().gte(1900, "l'année doit être supérieur à 1900").lte(year, `L'année ne pas pas dépasser ${year}`),
-    duration: z.coerce.number().gte(10).lte(300).nullable(),
+    duration: z.preprocess((val)=> val === "" || val === undefined ? null : Number(val),
+                    z.number()
+                        .gte(10)
+                        .lte(300)
+                        .nullable(),)    
 });
 
 export type MovieState = {

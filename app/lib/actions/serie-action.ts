@@ -15,7 +15,13 @@ const SerieFormSchema = z.object({
     id: z.string(), 
     title: z.string().min(3,  "Le titre doit contenir au moins 3 caractères"),
     start_year: z.coerce.number().gte(1900, "l'année doit être supérieur à 1900").lte(year, `L'année ne pas pas dépasser ${year}`), 
-    end_year: z.coerce.number().gte(1900, "l'année doit être supérieur à 1900").lte(year, `L'année ne peut pas dépasser ${year}`).nullable(), 
+    end_year: z.preprocess(
+    (val) => val === "" || val === undefined ? null : Number(val),
+    z.number()
+      .gte(1900, "L'année doit être supérieure à 1900")
+      .lte(year, `L'année ne peut pas dépasser ${year}`)
+      .nullable()
+  ),
     seasons: z.coerce.number().gte(1, "le nombre de saison doit être au moins 1"),
 });
 
