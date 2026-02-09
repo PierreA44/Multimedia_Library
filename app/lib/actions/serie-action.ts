@@ -9,12 +9,14 @@ import { auth } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
 
+const year: number = new Date().getFullYear();
+
 const SerieFormSchema = z.object({
     id: z.string(), 
-    title: z.string(),
-    startYear: z.coerce.number(), 
-    endYear: z.coerce.number().nullable(), 
-    seasons: z.coerce.number(),
+    title: z.string().min(3,  "Le titre doit contenir au moins 3 caractères"),
+    start_year: z.coerce.number().gte(1900, "l'année doit être supérieur à 1900").lte(year, `L'année ne pas pas dépasser ${year}`), 
+    end_year: z.coerce.number().gte(1900, "l'année doit être supérieur à 1900").lte(year, `L'année ne peut pas dépasser ${year}`).nullable(), 
+    seasons: z.coerce.number().gte(1, "le nombre de saison doit être au moins 1"),
 });
 
 export type SerieState = {
@@ -25,6 +27,13 @@ export type SerieState = {
         seasons?: string[];
     };
     message?: string | null;
+    fields?:{
+        title?: string;
+        start_year?: string;
+        end_year?: string | null;
+        seasons?: string;
+    };
+    redirectTo? : string | null;
 };
 
 const CreateSerie = SerieFormSchema.omit({id:true});
@@ -40,11 +49,31 @@ export async function createSerie (prevState: SerieState, formData: FormData): P
     if(!validateFields.success) {
         return {
             errors: validateFields.error.flatten().fieldErrors,
-            message: "Missing fields. Failed to create book."
+            message: "Missing fields. Failed to create serie.",
+            fields: {
+                title: formData.get("title")?.toString() ?? "",
+                start_year: formData.get("start_year")?.toString() ?? "",
+                end_year: formData.get("end_year")?.toString() ?? "",
+                seasons: formData.get("seasons")?.toString() ?? "",
+                }
         };
     };
 
-    const {title, startYear, endYear, seasons} = validateFields.data;
+    const {title, start_year, end_year, seasons} = validateFields.data;
+
+    if( end_year && end_year < start_year) {
+        return {
+            errors: { "end_year" : ["l'année de fin doit être supérieur à l'année de début."]},
+            fields: {
+            title,
+            start_year: start_year.toString(),
+            end_year: end_year.toString(),
+            seasons: seasons.toString(),
+            }
+        }
+    };
+    
+
     const normalizedTitle: string = title.toLocaleLowerCase();
 
 
@@ -54,13 +83,20 @@ export async function createSerie (prevState: SerieState, formData: FormData): P
         const [result] = await sql`SELECT id FROM medias WHERE title=${normalizedTitle} AND category='serie';`;
         
         if(result) {
-            return {message: "Serie already created"};
+            return {message: "Serie already created",
+                    fields: {
+                            title,
+                            start_year: start_year.toString(),
+                            end_year: end_year?.toString(),
+                            seasons: seasons.toString(),
+                            }
+                    };
         };
 
         if(session?.user?.email) {
             const newSerie: RowList<Row[]> = await sql`
             INSERT INTO medias (title, category, start_year, end_year, seasons)
-            VALUES (${normalizedTitle}, serie, ${startYear}, ${endYear}, ${seasons})
+            VALUES (${normalizedTitle}, 'serie', ${start_year}, ${end_year}, ${seasons})
             RETURNING id;`;
 
             const userId: RowList<Row[]> = await sql`SELECT id FROM users WHERE email=${session.user.email}`;
@@ -74,14 +110,22 @@ export async function createSerie (prevState: SerieState, formData: FormData): P
             revalidatePath("dashboard/add-media");
             refresh();
 
-            return {message: "Serie created succesfully."};
+            return {message: "Serie created succesfully.",
+                    redirectTo: `/dashboard/series/${newSerie[0].id}`
+            };
         } else return {message: "User not found"};
 
     } catch(error) {
         console.error(error);
         return {
-            message: "Database error: Failed to create serie."
-        }
+            message: "Database error: Failed to create serie.",
+            fields: {
+            title,
+            start_year: start_year.toString(),
+            end_year: end_year?.toString(),
+            seasons: seasons.toString(),
+                }
+            };
     };
 };
 

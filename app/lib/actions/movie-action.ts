@@ -7,14 +7,17 @@ import { Movie } from "../definitions";
 import { Session } from "next-auth";
 import { auth } from "@/auth";
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
+
+const year: number = new Date().getFullYear();
+
 
 const MovieFormSchema = z.object({
     id: z.string(),
-    title: z.string(),
-    director: z.string(),
-    year: z.number(),
-    duration: z.number().nullable(),
+    title: z.string().min(3),
+    director: z.string().min(5),
+    year: z.coerce.number().gte(1900, "l'année doit être supérieur à 1900").lte(year, `L'année ne pas pas dépasser ${year}`),
+    duration: z.coerce.number().gte(10).lte(300).nullable(),
 });
 
 export type MovieState = {
@@ -25,6 +28,13 @@ export type MovieState = {
         duration?: string[];
     };
     message?: string | null;
+    fields?: {
+        title? : string;
+        director? : string;
+        year? : string;
+        duration? : string;
+    };
+    redirectTo? : string | null;
 }
 
 const CreateMovie = MovieFormSchema.omit({id: true});
@@ -40,7 +50,13 @@ export async function createMovie (prevState: MovieState, formData: FormData): P
     if(!validateFields.success) {
         return {
             errors: validateFields.error.flatten().fieldErrors,
-            message: "Missing fields. Failed to create movie"
+            message: "Missing fields. Failed to create movie",
+            fields: {
+                title: formData.get("title")?.toString() ?? "",
+                director: formData.get("director")?.toString() ?? "",
+                year: formData.get("year")?.toString() ?? "",
+                duration: formData.get("duration")?.toString() ?? "",
+                }
         };
     };
 
@@ -73,7 +89,9 @@ export async function createMovie (prevState: MovieState, formData: FormData): P
             revalidatePath("dashboard/add-media");
             refresh();
 
-            return {message : `Movie created succesfully`}
+            return {message : `Movie created succesfully`,
+                    redirectTo: `/dashboard/movies/${newMovie[0].id}`
+            }
 
             } else return {message: "User not found"};
 

@@ -19,7 +19,7 @@ export default async function MoviesPage() {
     const movies: Movie[] | null = await fetchUserMovies(email);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-6">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-4xl font-bold text-center text-slate-900 mb-8">My Movies</h1>
                 <div className="space-y-3">

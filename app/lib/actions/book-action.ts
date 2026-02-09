@@ -7,13 +7,15 @@ import { Book } from "../definitions";
 import { auth } from "@/auth";
 import { Session } from "next-auth";
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" })
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
+
+const year: number = new Date().getFullYear();
 
 const BookFormSchema = z.object({
     id: z.string(),
-    title: z.string(),
-    author: z.string(),
-    originalPublishing: z.coerce.number().gt(1500, {message: "Please enter a year greater than 1500"}),
+    title: z.string().min(3),
+    author: z.string().min(5),
+    original_publishing: z.coerce.number().gte(1500, "Please enter a year greater than 1500").lte(year, `L'année ne pas pas dépasser ${year}`),
     genre: z.literal(["roman", "nouvelle", "conte", "biographie", "théâtre", "poésie", "essai"]),
 });
 
@@ -25,6 +27,13 @@ export type BookState = {
         genre?: string[];
     };
     message?: string | null;
+    fields?: {
+        title?: string;
+        author?: string;
+        original_publishing?: string;
+        genre?: string;
+    };
+    redirectTo?: string | null;
 };
 
 const CreateBook = BookFormSchema.omit({id:true});
@@ -33,18 +42,24 @@ export async function createBook (prevState: BookState, formData: FormData): Pro
     const validateFields = CreateBook.safeParse({
         title: formData.get("title") ,
         author: formData.get("author"),
-        originalPublishing: formData.get("originalPublishing"),
+        original_publishing: formData.get("originalPublishing"),
         genre: formData.get("genre"),
     });
 
     if(!validateFields.success) {
         return {
             errors: validateFields.error.flatten().fieldErrors,
-            message: "Missing fields. Failed to create book."
+            message: "Missing fields. Failed to create book.",
+            fields: {
+                title: formData.get("title")?.toString() ?? "",
+                author: formData.get("author")?.toString() ?? "",
+                original_publishing: formData.get("original_publishing")?.toString() ?? "",
+                genre: formData.get("genre")?.toString() ?? "",
+            }
         };
     };
 
-    const {title, author, originalPublishing, genre} = validateFields.data;
+    const {title, author, original_publishing, genre} = validateFields.data;
     const normalizedTitle: string = title.toLocaleLowerCase();
 
     const session: Session | null = await auth();
@@ -59,7 +74,7 @@ export async function createBook (prevState: BookState, formData: FormData): Pro
         if(session?.user?.email) {
             const newBook = await sql`
                 INSERT INTO medias (title, category, author, original_publishing, genre)
-                VALUES (${normalizedTitle}, 'book', ${author}, ${originalPublishing}, ${genre})
+                VALUES (${normalizedTitle}, 'book', ${author}, ${original_publishing}, ${genre})
                 RETURNING id;`;            
             
             const userId = await sql`SELECT id FROM users WHERE email=${session.user.email}`;
@@ -73,7 +88,9 @@ export async function createBook (prevState: BookState, formData: FormData): Pro
             revalidatePath("dashboard/add-media");
             refresh();
             
-            return {message: "Book created succesfully."};
+            return {message: "Book created succesfully.",
+                    redirectTo: `/dashboard/books/${newBook[0].id}`
+                };
 
         } else return { message: "User not found"};
 
