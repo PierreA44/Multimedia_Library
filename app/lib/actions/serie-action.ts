@@ -165,7 +165,7 @@ export async function fetchUserSeries(email: string): Promise<Serie[] | null> {
     }
 }
 
-export async function fetchSerieById(id:string): Promise<Serie | null> {
+export async function fetchSerieById(id:string): Promise<Serie> {
 
     const emptySerie: Serie = {
         id: 0,
