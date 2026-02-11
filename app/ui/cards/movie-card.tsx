@@ -1,17 +1,13 @@
 import { Movie } from "@/app/lib/definitions";
-import { comments } from "@/app/lib/placeholder-data";
 
 export default function MovieCard( {movie}: {movie:Movie}) {
 
-let commentMovie: string = "aucun commentaire pour le moment";
+const commentMovie: string = "aucun commentaire pour le moment";
 
-if(comments.filter((comment)=>comment.multimediaId === movie.id).length > 0) {
-    commentMovie = comments.filter((comment)=>comment.multimediaId === movie.id)[0].text;
-};
 
     return (
         <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
+            <div className="bg-linear-to-r from-blue-500 to-blue-600 p-6 text-white">
                 <h1 className="text-4xl font-bold mb-2">{movie.title}</h1>
                 <p className="text-blue-100">🎬 Film</p>
             </div>

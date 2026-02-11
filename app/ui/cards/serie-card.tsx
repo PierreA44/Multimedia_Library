@@ -1,14 +1,10 @@
 import { Serie } from "../../lib/definitions";
-import { comments } from "@/app/lib/placeholder-data";
 
 export default function SerieCard( {serie} : { serie:Serie | null } ) {
     
 
-    let commentSerie: string = "aucun commentaire pour le moment";
+    const commentSerie: string = "aucun commentaire pour le moment";
     
-    if(serie && comments.filter((comment)=> comment.multimediaId === serie.id).length > 0){
-        commentSerie = comments.filter((comment)=>comment.multimediaId === serie.id)[0].text
-    }
 
     return (
         <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">

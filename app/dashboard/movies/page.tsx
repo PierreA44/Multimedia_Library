@@ -30,7 +30,9 @@ export default async function MoviesPage() {
                                 <span className="font-semibold">{movie.title}</span>
                             </Link>
                             <div className="pr-3">
-                                <RemoveMediaButton librarieId={movie.librarie_id} category={"movies"} />
+                                {movie.librarie_id && 
+                                <RemoveMediaButton librarieId={movie.librarie_id} category={movie.category} />
+                                }
                             </div>
                         </div>
                     )

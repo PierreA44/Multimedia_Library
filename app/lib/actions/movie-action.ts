@@ -137,12 +137,12 @@ export async function fetchUserMovies(email: string): Promise<Movie[] | null> {
 export async function fetchMovieById(id:string): Promise<Movie> {
 
     const emptyMovie : Movie = {
-        id: '0',
+        id: 0,
         title: 'no movie',
         director :"",
         year: 0,
         duration: null,
-        category: 'movies',
+        category: "movie",
         librarie_id:0
     }
 

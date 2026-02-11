@@ -19,7 +19,7 @@ export default async function SeriesPage() {
     const series: Serie[] | null= await fetchUserSeries(email);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-6">
+        <div className="min-h-screen bg-linear-to-br from-purple-50 to-pink-100 p-6">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-4xl font-bold text-center text-purple-900 mb-8">My Series</h1>
                 <div className="space-y-3">
@@ -30,7 +30,9 @@ export default async function SeriesPage() {
                                 <span className="font-semibold">{serie.title}</span>
                             </Link>
                             <div className="pr-3">
-                                <RemoveMediaButton librarieId={serie.librarie_id} category="series" />
+                                {serie.librarie_id && 
+                                <RemoveMediaButton librarieId={serie.librarie_id} category={serie.category} />
+                                }
                             </div>
                         </div>
                     )

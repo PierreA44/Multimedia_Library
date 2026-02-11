@@ -36,7 +36,7 @@ export default function TableMedia({medias, email}: {medias: Media[] | null, ema
                 <table className="w-full border-collapse bg-white rounded-lg shadow-md overflow-hidden">
                     {updateMedia && updateMedia.length > 0 && 
                     <thead>
-                        <tr className="bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+                        <tr className="bg-linear-to-r from-slate-900 to-slate-800 text-white">
                             <th className="px-6 py-3 text-left font-semibold">Title</th>
                             <th className="px-6 py-3 text-left font-semibold">Type</th>
                             <th className="px-6 py-3 text-left font-semibold">Director/Author</th>

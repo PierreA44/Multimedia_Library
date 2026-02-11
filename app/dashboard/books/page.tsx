@@ -20,7 +20,7 @@ if(!email) {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-6">
+        <div className="min-h-screen bg-linear-to-br from-amber-50 to-orange-100 p-6">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-4xl font-bold text-center text-amber-900 mb-8">My Books</h1>
                 <div className="space-y-3">
@@ -30,9 +30,11 @@ if(!email) {
                             <Link href={`/dashboard/books/${book.id}`} className="flex-1 p-4 text-slate-800 hover:text-amber-600">
                                 <span className="font-semibold">{book.title}</span>
                             </Link>
+                            {book.librarie_id &&
                             <div className="pr-3">
-                                <RemoveMediaButton librarieId={book.librarie_id} category="books" />
+                                <RemoveMediaButton librarieId={book.librarie_id} category={book.category} />
                             </div>
+                            }
                         </div>
                     )
                     }):

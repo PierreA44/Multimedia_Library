@@ -18,33 +18,39 @@ export type Media = {
 }
 
 export type Movie = {
-    id: string;
+    id: number;
     title: string;
     director: string;
     year: number;
     duration: number | null;
-    category: "movies";
+    category: "movie";
     librarie_id: number;
+    notation?: number,
+    comment?: string
 };
 
 export type Serie = {
-    id: string;
+    id: number;
     title: string;
     start_year: number;
     end_year: number | null;
     seasons: number;
-    category: "series"
+    category: "serie"
     librarie_id: number;
+    notation?: number,
+    comment?: string
 };
 
 export type Book = {
-    id: string;
+    id: number;
     title: string;
     author: string;
     original_publishing: number | null;
     genre: "roman" | "nouvelle" | "conte" | "biographie" | "théâtre" | "poésie" | "essai";
-    category: "books";
+    category: "book";
     librarie_id: number;
+    notation?: number,
+    comment?: string
 };
 
 export type Comment = {

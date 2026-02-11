@@ -7,6 +7,6 @@ export default async function Page(props: {params : Promise<{id: string}>}) {
     const book:Book = await fetchBookById(params.id)
 
     return (
-        <BookCard book={book} />
+        <BookCard book={book} />        
     )
 }

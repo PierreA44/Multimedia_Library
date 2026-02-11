@@ -168,12 +168,12 @@ export async function fetchUserSeries(email: string): Promise<Serie[] | null> {
 export async function fetchSerieById(id:string): Promise<Serie | null> {
 
     const emptySerie: Serie = {
-        id: '0',
+        id: 0,
         title: 'no serie',
         start_year: 1,
         end_year: null,
         seasons: 0,
-        category:"series",
+        category: "serie",
         librarie_id: 0,
     }
 

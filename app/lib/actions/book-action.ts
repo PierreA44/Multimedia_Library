@@ -132,27 +132,53 @@ export async function fetchUserBooks(email: string): Promise<Book[] | null> {
     }
 };
 
-export async function fetchBookById(id:string): Promise<Book> {
+export async function fetchBookById(id: string): Promise<Book> {
+    
+    const session = await auth();
+    const email = session?.user?.email;
 
-       const emptyBook : Book = {
-        id: "0",
+    const emptyBook: Book = {
+        id: 0,
         title: "No book",
         author: "none",
-        original_publishing : null,
+        original_publishing: null,
         genre: "nouvelle",
-        category: 'books',
+        category: "book",
         librarie_id: 0,
+        notation: 0,
+        comment: ""
     };
 
     try {
-        const book: Book[] = await sql`SELECT id, title, author, original_publishing, genre FROM medias WHERE id=${id}`;
-        if(book[0]) {
-            return book[0];
+        if (email) {
+            const result: Book[] = await sql`SELECT 
+                    m.id, m.title, m.author, m.original_publishing, m.genre,
+                    l.notation, l.comment, l.id AS librarie_id,
+                    'book' AS category
+                FROM medias m
+                JOIN libraries l ON l.media_id = m.id
+                JOIN users u ON u.id = l.user_id
+                WHERE m.id = ${id} AND u.email = ${email}
+            `;
 
-        } else return emptyBook;
+            return result[0] ?? emptyBook;
+        }
+
+        // Sans utilisateur connecté
+        const result: Book[] = await sql`SELECT 
+                m.id, m.title, m.author, m.original_publishing, m.genre,
+                0 AS notation,
+                '' AS comment,
+                0 AS librarie_id,
+                'book' AS category
+            FROM medias m
+            WHERE m.id = ${id}
+        `;
+
+        return result[0] ?? emptyBook;
 
     } catch (error) {
         console.error(error);
-        return emptyBook
-    };
+        return emptyBook;
+    }
 };
