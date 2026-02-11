@@ -55,7 +55,7 @@ export type UserState = {
         password?: string;
         confirmPassword?: string;
     }
-    redirectTo?: string | null;
+    isCreated?: boolean;
 };
 
 export async function createUser (prevState:UserState, formData: FormData): Promise<UserState> {
@@ -90,7 +90,10 @@ export async function createUser (prevState:UserState, formData: FormData): Prom
         await sql`INSERT INTO users (name, email, password)
                 VALUES (${name}, ${email}, ${hashedPassword});`;
             revalidatePath("dashboard/");
-        return { message: "User created succesfully."}
+        return { 
+            message: "User created succesfully.",
+            isCreated: true,
+        }
 
     } catch (error) {
         console.error(error);

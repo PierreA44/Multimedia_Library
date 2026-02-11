@@ -10,15 +10,15 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '../button';
 import { useActionState } from 'react';
 import { createUser, UserState } from '@/app/lib/actions/user-actions';
+import Link from 'next/link';
 
 export default function UserForm() {
 
-    const initialState: UserState = {errors:{}, message: null, fields:{}, redirectTo: null};
+    const initialState: UserState = {errors:{}, message: null, fields:{}, isCreated: false};
     const [state, formAction] = useActionState(createUser, initialState);
 
-
-
 	return (
+	<div className={state.isCreated?"":""}>
 		<form action={formAction} className="space-y-6">
 			<div className="rounded-lg bg-white px-6 pb-6 pt-8 shadow-lg">
 				<h1 className="mb-6 text-3xl font-bold text-slate-900">Create User</h1>
@@ -150,13 +150,26 @@ export default function UserForm() {
 				<Button className="mt-6 w-full">
 					Create User <ArrowRightIcon className="ml-auto h-5 w-5" />
 				</Button>
-
-				<div className="flex h-8 items-end space-x-1 mt-4" aria-live="polite" aria-atomic="true">
-					{/* Placeholder for potential error messages (handled elsewhere) */}
-					<ExclamationCircleIcon className="h-5 w-5 text-transparent" />
-					<p className="text-sm text-transparent">&nbsp;</p>
-				</div>
 			</div>
-		</form>
+		</form> 
+		{state.isCreated && (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-fadeIn">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                User Created 🎉
+            </h2>
+
+            <p className="text-gray-600 mb-6">{state.message}</p>
+
+            <Link
+                href="/login"
+                className="block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+            >
+                Go to Login
+            </Link>
+        </div>
+    </div>
+)}
+	</div>
 	);
 }

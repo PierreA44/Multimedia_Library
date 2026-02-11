@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import LoginForm from "../ui/form/login-form";
+import Link from "next/link";
 
 export default function LoginPage() {
     return (
@@ -8,6 +9,7 @@ export default function LoginPage() {
                 <Suspense>
                     <LoginForm />
                 </Suspense>
+                <Link href={"/"} className="mt-6 inline-block px-6 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium transition-colors duration-200 ease-in-out text-center w-full">Back home</Link>
             </div>
         </main>
     );
