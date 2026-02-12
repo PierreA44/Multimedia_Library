@@ -121,7 +121,7 @@ export async function AddNotation(librarie_id: number, rating: number): Promise<
     try {
 
         const result = await sql`UPDATE libraries AS l
-                                SET notation = ${rating}
+                                SET notation = ${Number(rating)}
                                 FROM medias AS m
                                 WHERE l.id = ${librarie_id}
                                 AND m.id = l.media_id

@@ -51,6 +51,7 @@ export default function MovieCard( {movie}: {movie:Movie}) {
                         <p className="text-xl text-slate-900 font-semibold mt-1">{movie.year}</p>
                     </div>
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {movie.duration && (
                     <div className="bg-slate-50 p-4 rounded-lg">
                         <p className="text-slate-600 text-sm font-semibold">DURATION</p>
@@ -77,7 +78,7 @@ export default function MovieCard( {movie}: {movie:Movie}) {
                     ) : (
                         <p className="text-slate-800 italic">&quot;aucune note pour le moment&quot;</p>
                     )}
-
+                </div>
                 </div>
                 <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mt-6 relative">
                     <p className="text-slate-600 text-sm font-semibold mb-3">COMMENT</p>

@@ -167,6 +167,9 @@ export async function fetchUserSeries(email: string): Promise<Serie[] | null> {
 
 export async function fetchSerieById(id:string): Promise<Serie> {
 
+    const session = await auth();
+    const email = session?.user?.email;
+
     const emptySerie: Serie = {
         id: 0,
         title: 'no serie',
@@ -175,14 +178,31 @@ export async function fetchSerieById(id:string): Promise<Serie> {
         seasons: 0,
         category: "serie",
         librarie_id: 0,
+        notation: 0,
+        comment: ""
     }
 
     try {
-        const serie: Serie[] = await sql`SELECT id, title, start_year, end_year, seasons FROM medias WHERE id=${id};`;
+        if(email) {
+            const result: Serie[] = await sql`SELECT
+                    m.id, m.title, m.seasons, m.start_year, m.end_year,
+                    l.notation, l.comment, l.id AS librarie_id, 'serie' AS category
+                    FROM medias AS m
+                    JOIN libraries AS l ON l.media_id = m.id
+                    JOIN users AS u ON u.id = l.user_id
+                    WHERE m.id = ${id} AND u.email = ${email}`;
 
-        if(serie[0]) {
-            return serie[0];
-        } else return emptySerie;
+            return result[0] ?? emptySerie;
+        };
+
+        // Sans utilisateur connecté
+        const result: Serie[] = await sql`SELECT
+                    m.id, m.title, m.seasons, m.start_year, m.end_year,
+                    0 AS notation, '' AS comment, 0 AS librarie_id, 'serie' AS category
+                    FROM medias AS m
+                    WHERE m.id = ${id}`;
+
+        return result[0] ?? emptySerie;
         
     } catch (error) {
         console.error(error);

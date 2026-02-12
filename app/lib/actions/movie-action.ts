@@ -136,6 +136,10 @@ export async function fetchUserMovies(email: string): Promise<Movie[] | null> {
 
 export async function fetchMovieById(id:string): Promise<Movie> {
 
+    const session = await auth();
+    const email = session?.user?.email;
+
+
     const emptyMovie : Movie = {
         id: 0,
         title: 'no movie',
@@ -143,15 +147,33 @@ export async function fetchMovieById(id:string): Promise<Movie> {
         year: 0,
         duration: null,
         category: "movie",
-        librarie_id:0
+        librarie_id: 0,
+        notation : 0,
+        comment: ""
     }
 
     try {
-        const movie: Movie[] = await sql`SELECT id, title, director, year, duration FROM medias WHERE id=${id};`;
+        if(email) {
+            const result: Movie[] = await sql`SELECT
+                    m.id, m.title, m.director, m.year, m.duration,
+                    l.notation, l.comment, l.id AS librarie_id, 'movie' AS category
+                    FROM medias AS m
+                    JOIN libraries AS l ON l.media_id = m.id
+                    JOIN users AS u ON u.id = l.user_id
+                    WHERE m.id = ${id} AND u.email = ${email}`;
 
-        if(movie[0]) {
-            return movie[0]
-        } else return emptyMovie;
+            return result[0] ?? emptyMovie;
+        }
+
+        // Sans utilisateur connecté
+
+        const result: Movie[] = await sql`SELECT
+                    m.id, m.title, m.director, m.year, m.duration,
+                    0 AS notation, '' AS comment, 0 AS librarie_id, 'movie' AS category
+                    FROM medias AS m
+                    WHERE m.id = ${id}`;
+
+        return result[0] ?? emptyMovie;
 
     } catch (error) {
         console.error(error);

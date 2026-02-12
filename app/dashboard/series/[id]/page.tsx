@@ -4,7 +4,7 @@ import SerieCard from "@/app/ui/cards/serie-card";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
-    const serie:Serie | null = await fetchSerieById(params.id);
+    const serie:Serie = await fetchSerieById(params.id);
 
     return (
         <SerieCard serie={serie}/>
