@@ -1,15 +1,16 @@
 import Link from "next/link";
-import Logo from "../logo";
+import logo from "../logo mm.png";
 import NavLinks from "./nav-links";
 import { PowerIcon } from "@heroicons/react/24/outline";
 import { signOut } from "@/auth";
+import Image from "next/image";
 
 export default function SideNav () {
     return (
-        <div className="flex h-full flex-col bg-gradient-to-b from-white to-slate-50 border-r border-slate-200 px-3 py-4 md:px-4">
-            <Link className="mb-6 flex h-20 items-end justify-start rounded-lg md:h-32" href="/">
+        <div className="flex h-full flex-col bg-linear-to-b from-white to-slate-50 border-r border-slate-200 px-3 py-4 md:px-4">
+            <Link className="flex mt-2 h-20 items-end justify-center rounded-lg md:h-32" href="/">
                 <div className="w-32 md:w-40">
-                    <Logo />
+                    <Image src={logo} alt="logo" />
                 </div>
             </Link>
             <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
